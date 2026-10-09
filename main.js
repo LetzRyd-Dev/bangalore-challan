@@ -133,17 +133,7 @@ async function runAutomationPipeline() {
           }
         }
 
-        // Re-authenticate every 500 vehicles as a session refresh
-        if (vehiclesSinceLastReauth >= REAUTH_EVERY_N_VEHICLES) {
-          console.log(`\n[Scheduled Re-auth] ${vehiclesSinceLastReauth} vehicles scraped. Refreshing session...`);
-          try {
-            await engine.loginWithOTP();
-            vehiclesSinceLastReauth = 0;
-            console.log(`[Scheduled Re-auth] Session refreshed. Continuing...\n`);
-          } catch (reauthErr) {
-            console.warn(`[Scheduled Re-auth Warning] Re-auth failed: ${reauthErr.message}. Continuing anyway.`);
-          }
-        }
+
 
         await delay(800);
       }
