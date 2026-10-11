@@ -6,7 +6,6 @@ const { syncBatchToPostgres } = require('./db_sync');
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const REAUTH_EVERY_N_VEHICLES = 500;  // Re-auth after every 500 vehicles
 const MAX_VEHICLE_RETRIES = 7;         // Retry a vehicle up to 7 times before forcing re-auth
 
 /**
@@ -31,9 +30,7 @@ async function resetCheckpoint() {
  * - OTP Login ONCE at start
  * - Keep browser open for ALL batches
  * - Between batches: 60s wait + page refresh (NO re-login)
- * - Re-authenticate only:
- *     (a) After every 500 vehicles scraped, OR
- *     (b) If a vehicle fails after MAX_VEHICLE_RETRIES consecutive retries
+ * - Re-authenticate only if a vehicle fails after MAX_VEHICLE_RETRIES consecutive retries
  * - Close browser once at the very end
  */
 async function runAutomationPipeline() {
@@ -45,7 +42,7 @@ async function runAutomationPipeline() {
   console.log('===============================================================');
   console.log(`* DB: ${config.PG_CONFIG.database} on ${config.PG_CONFIG.host}`);
   console.log(`* Batch Size: ${batchSize} | Max Batches: ${maxBatches}`);
-  console.log(`* Re-auth: Every ${REAUTH_EVERY_N_VEHICLES} vehicles OR after ${MAX_VEHICLE_RETRIES} consecutive failures`);
+  console.log(`* Re-auth: Only after ${MAX_VEHICLE_RETRIES} consecutive failures (no arbitrary vehicle limit)`);
   console.log(`* Inter-Batch: 60s wait + page refresh (no new login)`);
 
   // 0. Reset daily checkpoint
